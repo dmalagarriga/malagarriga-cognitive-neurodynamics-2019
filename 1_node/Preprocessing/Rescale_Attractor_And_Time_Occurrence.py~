@@ -1,0 +1,83 @@
+from pylab import *
+from numpy import *
+from scipy import *
+import random
+
+#rescale_Duffing=0.05
+rescale_Ikeda=0.17
+rescale_Henon=0.06
+#rescale_Chen=0.005
+rescale_Chen=0.1
+
+
+#rescale_Duffing=0.5
+#rescale_Ikeda=1.0
+#rescale_Henon=0.5
+#rescale_Chen=0.05
+#rescale_Zaslavsky=1.0
+Deterministic=1
+Noise=0
+random.seed(1)
+if Deterministic==1:
+	Attractor='Henon'
+
+	Att=loadtxt('./Attractors/%s_Attractor.dat' %Attractor, unpack=True)
+	fout2=open('./Input/Time_Occurrences/%s/Time_Occurrence_Timescale_Miliseconds.dat' %Attractor,'w')
+	Att_out=open('./Attractors/Converted_Attractor_Sequence_%s.dat' %Attractor,'w')
+	Att_All = []
+	Att_All_rescaled=[]
+
+
+	Trans=16942
+	
+	for i in range(len(Att[0][:Trans])):
+		Att_All.append(Att[0,i]-Att[0,i-1])
+		
+	
+	Att_All_rescaled=Att_All-min(Att_All)
+	if Attractor=='Chen':
+		for i in range(len(Att_All_rescaled)):
+			print >> Att_out, Att_All_rescaled[i-1]/30,Att_All_rescaled[i]/30
+	else:
+		for i in range(len(Att_All_rescaled)):
+			print >> Att_out, Att_All_rescaled[i-1],Att_All_rescaled[i]
+
+
+	Trans1=len(Att_All_rescaled)
+	Trans2=5000
+	t_range = arange(0, 10, 0.001)
+	t_old=0
+
+	t_occurrence=zeros([len(Att_All_rescaled[:Trans1])])
+
+	for i in range(len(Att_All_rescaled[:Trans1])):
+		if Attractor == 'Ikeda':
+			t_occurrence[i]=t_occurrence[i-1]+ Att_All_rescaled[i]*rescale_Ikeda
+			print>>fout2,t_occurrence[i]
+		if Attractor == 'Henon':
+			t_occurrence[i]=t_occurrence[i-1]+ Att_All_rescaled[i]*rescale_Henon
+			print>>fout2,t_occurrence[i]
+		if Attractor == 'Chen':
+			t_occurrence[i]=t_occurrence[i-1]+ Att_All_rescaled[i]*rescale_Chen/30
+			print>>fout2,t_occurrence[i]
+if Noise==1:
+	Attractor='Noise'
+	fout2=open('./Input/Time_Occurrences/%s/Time_Occurrence_Timescale_Miliseconds.dat' %Attractor,'w')
+	#Att_out=open('./Attractors/Converted_Attractor_Sequence_%s.dat' %Attractor,'w')
+	random_numbers=[]
+	Trans=16942
+	t_occurrence=zeros([Trans])	
+	for i in range(Trans):
+		random_numbers.append(random.uniform(0.0,0.3))
+		
+	for i in range(Trans):
+		t_occurrence[i]=t_occurrence[i-1]+random_numbers[i]	
+		print>>fout2, t_occurrence[i]
+
+
+
+
+
+
+		
+
