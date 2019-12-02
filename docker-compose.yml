@@ -1,0 +1,8 @@
+version: '2.1'
+
+services:
+  malagarriga-cognitive-neurodynamics-2019:
+    image: malagarriga-cognitive-neurodynamics-2019
+    build: .
+    ports:
+      - 8888:8888
